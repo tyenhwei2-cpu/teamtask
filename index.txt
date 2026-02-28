@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Ops Tracker | Cloud Sync</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .loading-shimmer { background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Ops Tracker Pro</h1>
+                <p id="auth-status" class="text-slate-400 text-sm flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Connecting to Cloud...
+                </p>
+            </div>
+            <div class="flex gap-2">
+                <button id="new-task-btn" onclick="openModal()" disabled class="opacity-50 cursor-not-allowed bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2">
+                    <span>+</span> New Task
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass p-6 rounded-2xl">
+                <p class="text-slate-400 text-sm font-medium">Active Tasks</p>
+                <h2 id="total-tasks" class="text-4xl font-bold mt-2">0</h2>
+            </div>
+            <div class="glass p-6 rounded-2xl border-l-4 border-yellow-500">
+                <p class="text-slate-400 text-sm font-medium">Blocked</p>
+                <h2 id="blocked-tasks" class="text-4xl font-bold mt-2 text-yellow-500">0</h2>
+            </div>
+            <div class="glass p-6 rounded-2xl border-l-4 border-emerald-500">
+                <p class="text-slate-400 text-sm font-medium">Completed</p>
+                <h2 id="done-tasks" class="text-4xl font-bold mt-2 text-emerald-500">0</h2>
+            </div>
+        </div>
+
+        <!-- Task List -->
+        <div class="glass rounded-2xl overflow-hidden">
+            <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
+                <h3 class="font-semibold text-slate-200 uppercase text-xs tracking-wider">Team Tasks (Live)</h3>
+                <span id="sync-indicator" class="text-[10px] text-emerald-400 font-bold hidden">● LIVE SYNC</span>
+            </div>
+            <div id="task-list" class="divide-y divide-slate-800 max-h-[600px] overflow-y-auto custom-scrollbar">
+                <div class="p-12 text-center text-slate-500">
+                    <div class="loading-shimmer h-4 w-48 mx-auto rounded mb-4"></div>
+                    Initializing team dashboard...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="glass bg-slate-900 w-full max-w-md rounded-2xl p-6 shadow-2xl">
+            <h2 class="text-xl font-bold mb-4">Create New Task</h2>
+            <form id="task-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Task Title</label>
+                    <input type="text" id="task-title" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Owner</label>
+                        <select id="task-owner" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                            <option>Team Member 1</option>
+                            <option>Team Member 2</option>
+                            <option>Team Member 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Priority</label>
+                        <select id="task-priority" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                            <option value="High">🔴 High</option>
+                            <option value="Medium">🟡 Medium</option>
+                            <option value="Low">🟢 Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Status</label>
+                    <select id="task-status" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                        <option value="Todo">Todo</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Blocked">Blocked</option>
+                        <option value="Done">Done</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 py-2 rounded-lg transition-colors">Cancel</button>
+                    <button id="submit-btn" type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold transition-colors">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuration from Environment
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'startup-ops-default';
+
+        let currentUser = null;
+
+        // Initialize Auth
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Auth error:", err);
+                document.getElementById('auth-status').innerHTML = `<span class="text-red-500 font-bold">Sync Error: ${err.message}</span>`;
+            }
+        };
+
+        initAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-status').innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 
+                    Cloud Active: ${user.uid.substring(0,8)}...
+                `;
+                document.getElementById('new-task-btn').disabled = false;
+                document.getElementById('new-task-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('sync-indicator').classList.remove('hidden');
+                startListening();
+            }
+        });
+
+        // Firestore Logic
+        const tasksCollection = collection(db, 'artifacts', appId, 'public', 'data', 'tasks');
+
+        function startListening() {
+            // Using a simple query as per Rule 2
+            onSnapshot(tasksCollection, (snapshot) => {
+                const tasks = [];
+                snapshot.forEach((doc) => {
+                    tasks.push({ id: doc.id, ...doc.data() });
+                });
+                // Sort in memory for Rule 2
+                tasks.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                renderTasks(tasks);
+            }, (error) => {
+                console.error("Snapshot error:", error);
+            });
+        }
+
+        // DOM Logic
+        window.openModal = () => document.getElementById('modal').classList.remove('hidden');
+        window.closeModal = () => {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('task-form').reset();
+        };
+
+        document.getElementById('task-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = "Saving...";
+
+            try {
+                await addDoc(tasksCollection, {
+                    title: document.getElementById('task-title').value,
+                    owner: document.getElementById('task-owner').value,
+                    priority: document.getElementById('task-priority').value,
+                    status: document.getElementById('task-status').value,
+                    createdAt: Date.now(),
+                    createdBy: currentUser.uid
+                });
+                closeModal();
+            } catch (err) {
+                alert("Failed to save: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Add Task";
+            }
+        });
+
+        window.updateStatus = async (id, newStatus) => {
+            const taskDoc = doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id);
+            await updateDoc(taskDoc, { status: newStatus });
+        };
+
+        window.deleteTask = async (id) => {
+            if (confirm("Delete this task?")) {
+                const taskDoc = doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id);
+                await deleteDoc(taskDoc);
+            }
+        };
+
+        function renderTasks(tasks) {
+            const list = document.getElementById('task-list');
+            if (tasks.length === 0) {
+                list.innerHTML = `<div class="p-12 text-center text-slate-500 text-sm">No tasks. Start the sprint!</div>`;
+                updateStats([]);
+                return;
+            }
+
+            list.innerHTML = tasks.map(task => `
+                <div class="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:bg-slate-800/30 transition-colors">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${getPriorityClass(task.priority)}">${task.priority}</span>
+                            <h4 class="font-semibold text-slate-100">${task.title}</h4>
+                        </div>
+                        <div class="flex gap-4 text-xs text-slate-500">
+                            <span>👤 ${task.owner}</span>
+                            <span>🕒 ${new Date(task.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                        <select onchange="updateStatus('${task.id}', this.value)" class="bg-slate-800 border border-slate-700 text-xs rounded p-1.5 outline-none focus:ring-1 focus:ring-blue-500">
+                            <option value="Todo" ${task.status === 'Todo' ? 'selected' : ''}>Todo</option>
+                            <option value="In Progress" ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="Blocked" ${task.status === 'Blocked' ? 'selected' : ''}>Blocked</option>
+                            <option value="Done" ${task.status === 'Done' ? 'selected' : ''}>Done</option>
+                        </select>
+                        <button onclick="deleteTask('${task.id}')" class="text-slate-600 hover:text-red-400 transition-colors p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            updateStats(tasks);
+        }
+
+        function getPriorityClass(priority) {
+            if (priority === 'High') return 'bg-red-500/10 text-red-500';
+            if (priority === 'Medium') return 'bg-yellow-500/10 text-yellow-500';
+            return 'bg-emerald-500/10 text-emerald-500';
+        }
+
+        function updateStats(tasks) {
+            document.getElementById('total-tasks').textContent = tasks.filter(t => t.status !== 'Done').length;
+            document.getElementById('blocked-tasks').textContent = tasks.filter(t => t.status === 'Blocked').length;
+            document.getElementById('done-tasks').textContent = tasks.filter(t => t.status === 'Done').length;
+        }
+    </script>
+</body>
+</html>
