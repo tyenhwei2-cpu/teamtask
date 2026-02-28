@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2299.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Startup Ops Tracker | Cloud Sync&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&amp;display=swap');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.custom-scrollbar::-webkit-scrollbar { width: 6px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.loading-shimmer { background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="p-4 md:p-8 min-h-screen"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="max-w-6xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Header --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent"&gt;Ops Tracker Pro&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p id="auth-status" class="text-slate-400 text-sm flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"&gt;&lt;/span&gt; Connecting to Cloud...</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button id="new-task-btn" onclick="openModal()" disabled class="opacity-50 cursor-not-allowed bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span&gt;+&lt;/span&gt; New Task</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Stats Grid --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="glass p-6 rounded-2xl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-slate-400 text-sm font-medium"&gt;Active Tasks&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 id="total-tasks" class="text-4xl font-bold mt-2"&gt;0&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="glass p-6 rounded-2xl border-l-4 border-yellow-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-slate-400 text-sm font-medium"&gt;Blocked&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 id="blocked-tasks" class="text-4xl font-bold mt-2 text-yellow-500"&gt;0&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="glass p-6 rounded-2xl border-l-4 border-emerald-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-slate-400 text-sm font-medium"&gt;Completed&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 id="done-tasks" class="text-4xl font-bold mt-2 text-emerald-500"&gt;0&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Task List --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="glass rounded-2xl overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 class="font-semibold text-slate-200 uppercase text-xs tracking-wider"&gt;Team Tasks (Live)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span id="sync-indicator" class="text-[10px] text-emerald-400 font-bold hidden"&gt;● LIVE SYNC&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="task-list" class="divide-y divide-slate-800 max-h-[600px] overflow-y-auto custom-scrollbar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="p-12 text-center text-slate-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="loading-shimmer h-4 w-48 mx-auto rounded mb-4"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>Initializing team dashboard...</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="glass bg-slate-900 w-full max-w-md rounded-2xl p-6 shadow-2xl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-xl font-bold mb-4"&gt;Create New Task&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;form id="task-form" class="space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label class="block text-sm text-slate-400 mb-1"&gt;Task Title&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="task-title" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="grid grid-cols-2 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="block text-sm text-slate-400 mb-1"&gt;Owner&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select id="task-owner" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Team Member 1&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Team Member 2&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Team Member 3&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="block text-sm text-slate-400 mb-1"&gt;Priority&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select id="task-priority" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="High"&gt;🔴 High&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Medium"&gt;🟡 Medium&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Low"&gt;🟢 Low&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label class="block text-sm text-slate-400 mb-1"&gt;Status&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select id="task-status" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Todo"&gt;Todo&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="In Progress"&gt;In Progress&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Blocked"&gt;Blocked&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Done"&gt;Done&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex gap-3 pt-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 py-2 rounded-lg transition-colors"&gt;Cancel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="submit-btn" type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold transition-colors"&gt;Add Task&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Firebase SDK --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script type="module"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>import { getFirestore, collection, addDoc, onSnapshot, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Configuration from Environment</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const firebaseConfig = JSON.parse(__firebase_config);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const app = initializeApp(firebaseConfig);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const auth = getAuth(app);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const db = getFirestore(app);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const appId = typeof __app_id !== 'undefined' ? __app_id : 'startup-ops-default';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let currentUser = null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Initialize Auth</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const initAuth = async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (typeof __initial_auth_token !== 'undefined' &amp;&amp; __initial_auth_token) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>await signInWithCustomToken(auth, __initial_auth_token);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>await signInAnonymously(auth);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (err) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error("Auth error:", err);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('auth-status').innerHTML = `&lt;span class="text-red-500 font-bold"&gt;Sync Error: ${err.message}&lt;/span&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>initAuth();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>onAuthStateChanged(auth, (user) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (user) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>currentUser = user;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('auth-status').innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="w-2 h-2 rounded-full bg-emerald-500"&gt;&lt;/span&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>Cloud Active: ${user.uid.substring(0,8)}...</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('new-task-btn').disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('new-task-btn').classList.remove('opacity-50', 'cursor-not-allowed');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('sync-indicator').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>startListening();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Firestore Logic</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const tasksCollection = collection(db, 'artifacts', appId, 'public', 'data', 'tasks');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function startListening() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Using a simple query as per Rule 2</p>
+<p class="p1"><span class="Apple-converted-space">            </span>onSnapshot(tasksCollection, (snapshot) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const tasks = [];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>snapshot.forEach((doc) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tasks.push({ id: doc.id, ...doc.data() });</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Sort in memory for Rule 2</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tasks.sort((a, b) =&gt; (b.createdAt || 0) - (a.createdAt || 0));</p>
+<p class="p1"><span class="Apple-converted-space">                </span>renderTasks(tasks);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, (error) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error("Snapshot error:", error);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// DOM Logic</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.openModal = () =&gt; document.getElementById('modal').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.closeModal = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('modal').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('task-form').reset();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('task-form').addEventListener('submit', async (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!currentUser) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const btn = document.getElementById('submit-btn');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.textContent = "Saving...";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>await addDoc(tasksCollection, {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>title: document.getElementById('task-title').value,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>owner: document.getElementById('task-owner').value,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>priority: document.getElementById('task-priority').value,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>status: document.getElementById('task-status').value,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>createdAt: Date.now(),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>createdBy: currentUser.uid</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>closeModal();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (err) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert("Failed to save: " + err.message);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} finally {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>btn.textContent = "Add Task";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.updateStatus = async (id, newStatus) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const taskDoc = doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>await updateDoc(taskDoc, { status: newStatus });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.deleteTask = async (id) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (confirm("Delete this task?")) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const taskDoc = doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>await deleteDoc(taskDoc);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function renderTasks(tasks) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const list = document.getElementById('task-list');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (tasks.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>list.innerHTML = `&lt;div class="p-12 text-center text-slate-500 text-sm"&gt;No tasks. Start the sprint!&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateStats([]);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>list.innerHTML = tasks.map(task =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:bg-slate-800/30 transition-colors"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex items-center gap-2 mb-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${getPriorityClass(task.priority)}"&gt;${task.priority}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h4 class="font-semibold text-slate-100"&gt;${task.title}&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex gap-4 text-xs text-slate-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span&gt;👤 ${task.owner}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span&gt;🕒 ${new Date(task.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select onchange="updateStatus('${task.id}', this.value)" class="bg-slate-800 border border-slate-700 text-xs rounded p-1.5 outline-none focus:ring-1 focus:ring-blue-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Todo" ${task.status === 'Todo' ? 'selected' : ''}&gt;Todo&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="In Progress" ${task.status === 'In Progress' ? 'selected' : ''}&gt;In Progress&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Blocked" ${task.status === 'Blocked' ? 'selected' : ''}&gt;Blocked&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option value="Done" ${task.status === 'Done' ? 'selected' : ''}&gt;Done&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="deleteTask('${task.id}')" class="text-slate-600 hover:text-red-400 transition-colors p-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateStats(tasks);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function getPriorityClass(priority) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (priority === 'High') return 'bg-red-500/10 text-red-500';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (priority === 'Medium') return 'bg-yellow-500/10 text-yellow-500';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return 'bg-emerald-500/10 text-emerald-500';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateStats(tasks) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('total-tasks').textContent = tasks.filter(t =&gt; t.status !== 'Done').length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('blocked-tasks').textContent = tasks.filter(t =&gt; t.status === 'Blocked').length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('done-tasks').textContent = tasks.filter(t =&gt; t.status === 'Done').length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
